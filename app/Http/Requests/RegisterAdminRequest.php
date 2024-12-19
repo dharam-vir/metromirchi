@@ -21,9 +21,9 @@ class RegisterAdminRequest extends FormRequest {
 
     public function rules(): array {
         return [
-            'name' => 'required',
-            'email' => 'required',
-            'password' => 'required',
+            'name' => 'required|string|max:255',
+            'email' => 'required|email',
+            'password' => 'required|string|min:8',
         ];
     }
 }
