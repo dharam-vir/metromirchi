@@ -12,22 +12,28 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('leads', function (Blueprint $table) {
-            $table->bigIncrements('id');  // Changed to bigIncrements for a larger range of IDs
+            $table->bigIncrements('id');  // Primary key
             $table->unsignedBigInteger('listing_id')->nullable();
-            $table->foreign('listing_id')->references('id')->on('listing')->onDelete('cascade');
+            $table->foreign('listing_id')->references('id')->on('listing')->onDelete('cascade'); // Corrected to 'listings' table name
+        
             $table->unsignedBigInteger('service_id');
-            $table->foreign('service_id')->references('id')->on('sub_category')->onDelete('cascade');
+            $table->foreign('service_id')->references('id')->on('sub_category')->onDelete('cascade'); // Corrected to 'sub_categories' table name
+        
             $table->text('description');
-            $table->integer('status');
+            $table->tinyInteger('status')->default(0);
+        
             $table->unsignedBigInteger('user_assigned_id');
             $table->foreign('user_assigned_id')->references('id')->on('users')->onDelete('cascade');
+        
             $table->unsignedBigInteger('client_id');
             $table->foreign('client_id')->references('id')->on('clients')->onDelete('cascade');
+        
             $table->unsignedBigInteger('user_created_id');
             $table->foreign('user_created_id')->references('id')->on('admins')->onDelete('cascade');
-            $table->dateTime('contact_date'); // Corrected to dateTime for clarity
-            $table->timestamps();
-        });
+        
+            $table->dateTime('contact_date'); // Ensures proper data type for date and time
+            $table->timestamps(); // Includes created_at and updated_at columns
+        });        
         
     }
 

@@ -6,7 +6,6 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Api\UserController;
 use App\Http\Controllers\Api\AuthController;
-use App\Http\Controllers\Api\CategoryController;
 use App\Http\Controllers\Api\ServiceController;
 use App\Http\Controllers\Api\WalletController;
 
@@ -19,18 +18,22 @@ Route::prefix('v1')->group(function () {
     Route::get('/logout', [AuthController::class, "Logout"]);
     Route::get('/checkIfUserIsLoggedIn', [AuthController::class, "checkIfUserIsLoggedIn"]);
 
-
-
-
+      //leads 
+      Route::group(['prefix' => 'leads'], function () {
+        Route::post('/create', [LeadController::class, "Create"]);
+        Route::post('/showlead', [LeadController::class, "showLead"]);
+        Route::post('/updatestatus/{id}', [LeadController::class, "updateStatus"]);
+        Route::post('/updatefollowup/{id}', [LeadController::class, "updateFollowup"]);            
+    });
 
     Route::group(['middleware' => 'CheckJWT'], function () {
 
         Route::group(['prefix' => 'wallet'], function () {
             Route::post('/add-money', [WalletController::class, 'addMoney']);
+            Route::get('/transaction-history', [WalletController::class, 'showTransactionHistory']);
             Route::post('/spend-money', [WalletController::class, 'spendMoney']);
             Route::post('/spend-for-leads', [WalletController::class, 'spendForLeads']);
         });
-
 
         //User
         Route::group(['prefix' => 'user'], function () {
@@ -38,26 +41,15 @@ Route::prefix('v1')->group(function () {
             Route::post('/create', [UserController::class, "Create"]);
             Route::post('/update', [UserController::class, "Update"]);
         });
-        //category
-        Route::group(['prefix => "category'], function () {
-            Route::get('/show', [CategoryController::class, "Index"]);
-            Route::post('/update', [CategoryController::class, "Index"]);
-        });
 
         //Services 
         Route::group(['prefix' => 'services'], function () {
-            Route::get('/show', [ServiceController::class, "Index"]);
-            Route::get('/create', [ServiceController::class, "Index"]);
-            Route::get('/delete', [ServiceController::class, "Index"]);
+            Route::get('/my-services', [ServiceController::class, "showServices"]);
+            Route::post('/add-services', [ServiceController::class, "addServices"]);
+            Route::post('/deactive-services', [ServiceController::class, "deactiveServices"]);
         });
 
-        //leads 
-        Route::group(['prefix' => 'leads'], function () {
-            Route::get('/data', [LeadController::class, "anyData"]);
-            Route::get('/updateassign/{id}', [LeadController::class, "updateAssign"]);
-            Route::get('/updatestatus/{id}', [LeadController::class, "updateStatus"]);
-            Route::get('/updatefollowup/{id}', [LeadController::class, "updateFollowup"]);            
-        });
+        // Comment
         Route::get('/comments/{type}/{id}', [CommentController::class, "store"]);
         /**
          * Leads

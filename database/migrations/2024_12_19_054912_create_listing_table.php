@@ -13,6 +13,7 @@ return new class extends Migration
     {
         Schema::create('listing', function (Blueprint $table) {
             $table->id();
+            $table->string('listing_code')->unique();
             $table->unsignedBigInteger('user_id');
             $table->unsignedBigInteger('category_id')->nullable();  // Optional: Foreign key to a category table
             $table->string('company_name');
@@ -32,6 +33,7 @@ return new class extends Migration
             // Foreign key constraints
             $table->foreign('user_id')->references('id')->on('users')->onDelete('cascade');
             $table->foreign('category_id')->references('id')->on('category')->onDelete('cascade');
+            $table->index('listing_code');
         });
         
     }
