@@ -16,9 +16,7 @@ Route::get('/token_error', function (Request $request) {
 });
 Route::prefix('v1')->group(function () {
     Route::post('/login', [AuthController::class, "Login"]);
-    Route::post('/singup', function(){
-        
-    });
+    Route::post('/singup', [AuthController::class, 'SingUp']);
     Route::get('/logout', [AuthController::class, "Logout"]);
     Route::get('/checkIfUserIsLoggedIn', [AuthController::class, "checkIfUserIsLoggedIn"]);
 
