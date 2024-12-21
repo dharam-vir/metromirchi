@@ -12,7 +12,6 @@ use App\Http\Controllers\Api\WalletController;
 
 Route::get('/token_error', function (Request $request) {
     return json_encode(['status' => 'Failure', 'message' => 'Please enter valid token!!']);
-    $request->user();
 });
 Route::prefix('v1')->group(function () {
     Route::post('/login', [AuthController::class, "Login"]);
