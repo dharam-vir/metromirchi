@@ -1,44 +1,90 @@
 <?php
 
+use App\Http\Controllers\Api\LeadController;
+use App\Http\Controllers\Api\CommentController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Api\UserController;
 use App\Http\Controllers\Api\AuthController;
+use App\Http\Controllers\Api\CategoryController;
 use App\Http\Controllers\Api\ServiceController;
+use App\Http\Controllers\Api\WalletController;
 
 Route::get('/token_error', function (Request $request) {
-    return json_encode(['status'=>'Failure', 'message'=>'Please enter valid token!!']);
+    return json_encode(['status' => 'Failure', 'message' => 'Please enter valid token!!']);
     $request->user();
 });
-Route::prefix('v1')->group(function(){
-    Route::post('/login',[AuthController::class, "Login"]);
-    Route::post('/singup',[AuthController::class, 'SingUp']);
-    Route::get('/logout',[AuthController::class, "Logout"]);
-    Route::get('/checkIfUserIsLoggedIn',[AuthController::class, "checkIfUserIsLoggedIn"]);
-    
-    //Services 
-    Route::group(['prefix' => 'services'], function(){
-     Route::get('/data', [ServiceController::class,"Index"]);
+Route::prefix('v1')->group(function () {
+    Route::post('/login', [AuthController::class, "Login"]);
+    Route::post('/singup', function(){
+        
     });
+    Route::get('/logout', [AuthController::class, "Logout"]);
+    Route::get('/checkIfUserIsLoggedIn', [AuthController::class, "checkIfUserIsLoggedIn"]);
 
-    
 
-    Route::group(['middleware'=>'CheckJWT'], function(){ 
-     Route::post('/user', [UserController::class, "Index"]);
-     Route::post('/create', [UserController::class, "Create"]);
-     Route::post('/update', [UserController::class, "Update"]);
 
-       
-    /**
-     * Main
-     */
-    // Route::get('/', 'PagesController@dashboard');
-    // Route::get('dashboard', 'PagesController@dashboard')->name('dashboard');
-    
-/**
- * Users
- */
-// Route::group(['prefix' => 'users'], function () {
+
+
+    Route::group(['middleware' => 'CheckJWT'], function () {
+
+        Route::group(['prefix' => 'wallet'], function () {
+            Route::post('/add-money', [WalletController::class, 'addMoney']);
+            Route::post('/spend-money', [WalletController::class, 'spendMoney']);
+            Route::post('/spend-for-leads', [WalletController::class, 'spendForLeads']);
+        });
+
+
+        //User
+        Route::group(['prefix' => 'user'], function () {
+            Route::post('/show', [UserController::class, "Index"]);
+            Route::post('/create', [UserController::class, "Create"]);
+            Route::post('/update', [UserController::class, "Update"]);
+        });
+        //category
+        Route::group(['prefix => "category'], function () {
+            Route::get('/show', [CategoryController::class, "Index"]);
+            Route::post('/update', [CategoryController::class, "Index"]);
+        });
+
+        //Services 
+        Route::group(['prefix' => 'services'], function () {
+            Route::get('/show', [ServiceController::class, "Index"]);
+            Route::get('/create', [ServiceController::class, "Index"]);
+            Route::get('/delete', [ServiceController::class, "Index"]);
+        });
+
+        //leads 
+        Route::group(['prefix' => 'leads'], function () {
+            Route::get('/data', [LeadController::class, "anyData"]);
+            Route::get('/updateassign/{id}', [LeadController::class, "updateAssign"]);
+            Route::get('/updatestatus/{id}', [LeadController::class, "updateStatus"]);
+            Route::get('/updatefollowup/{id}', [LeadController::class, "updateFollowup"]);            
+        });
+        Route::get('/comments/{type}/{id}', [CommentController::class, "store"]);
+        /**
+         * Leads
+         */
+        // Route::group(['prefix' => 'leads'], function () {
+//     Route::get('/data', 'LeadsController@anyData')->name('leads.data');
+//     Route::patch('/updateassign/{id}', 'LeadsController@updateAssign');
+//     Route::patch('/updatestatus/{id}', 'LeadsController@updateStatus');
+//     Route::patch('/updatefollowup/{id}', 'LeadsController@updateFollowup')->name('leads.followup');
+// });
+//     Route::resource('leads', 'LeadsController');
+//     Route::post('/comments/{type}/{id}', 'CommentController@store');
+
+
+        /**
+         * Main
+         */
+        // Route::get('/', 'PagesController@dashboard');
+        // Route::get('dashboard', 'PagesController@dashboard')->name('dashboard');
+
+        /**
+         * Users
+         */
+        // Route::group(['prefix' => 'users'], function () {
 //     Route::get('/data', 'UsersController@anyData')->name('users.data');
 //     Route::get('/taskdata/{id}', 'UsersController@taskData')->name('users.taskdata');
 //     Route::get('/leaddata/{id}', 'UsersController@leadData')->name('users.leaddata');
@@ -47,14 +93,14 @@ Route::prefix('v1')->group(function(){
 // });
 //     Route::resource('users', 'UsersController');
 
- /**
- * Roles
- */
-    // Route::resource('roles', 'RolesController');
-/**
- * Clients
- */
-// Route::group(['prefix' => 'clients'], function () {
+        /**
+         * Roles
+         */
+        // Route::resource('roles', 'RolesController');
+        /**
+         * Clients
+         */
+        // Route::group(['prefix' => 'clients'], function () {
 //     Route::get('/data', 'ClientsController@anyData')->name('clients.data');
 //     Route::post('/create/cvrapi', 'ClientsController@cvrapiStart');
 //     Route::post('/upload/{id}', 'DocumentsController@upload');
@@ -63,11 +109,11 @@ Route::prefix('v1')->group(function(){
 //     Route::resource('clients', 'ClientsController');
 //     Route::resource('documents', 'DocumentsController');
 
-  
-/**
- * Tasks
- */
-// Route::group(['prefix' => 'tasks'], function () {
+
+        /**
+         * Tasks
+         */
+        // Route::group(['prefix' => 'tasks'], function () {
 //     Route::get('/data', 'TasksController@anyData')->name('tasks.data');
 //     Route::patch('/updatestatus/{id}', 'TasksController@updateStatus');
 //     Route::patch('/updateassign/{id}', 'TasksController@updateAssign');
@@ -75,21 +121,10 @@ Route::prefix('v1')->group(function(){
 // });
 //     Route::resource('tasks', 'TasksController');
 
-/**
- * Leads
- */
-// Route::group(['prefix' => 'leads'], function () {
-//     Route::get('/data', 'LeadsController@anyData')->name('leads.data');
-//     Route::patch('/updateassign/{id}', 'LeadsController@updateAssign');
-//     Route::patch('/updatestatus/{id}', 'LeadsController@updateStatus');
-//     Route::patch('/updatefollowup/{id}', 'LeadsController@updateFollowup')->name('leads.followup');
-// });
-//     Route::resource('leads', 'LeadsController');
-//     Route::post('/comments/{type}/{id}', 'CommentController@store');
-/**
- * Settings
- */
-// Route::group(['prefix' => 'settings'], function () {
+        /**
+         * Settings
+         */
+        // Route::group(['prefix' => 'settings'], function () {
 //     Route::get('/', 'SettingsController@index')->name('settings.index');
 //     Route::patch('/permissionsUpdate', 'SettingsController@permissionsUpdate');
 //     Route::patch('/overall', 'SettingsController@updateOverall');
@@ -100,16 +135,16 @@ Route::prefix('v1')->group(function(){
 //         Route::get('/{id}', 'NotificationsController@markRead');
 //     });
 
-      /**
-     * Invoices
-     */
-    // Route::group(['prefix' => 'invoices'], function () {
-    //     Route::post('/updatepayment/{id}', 'InvoicesController@updatePayment')->name('invoice.payment.date');
-    //     Route::post('/reopenpayment/{id}', 'InvoicesController@reopenPayment')->name('invoice.payment.reopen');
-    //     Route::post('/sentinvoice/{id}', 'InvoicesController@updateSentStatus')->name('invoice.sent');
-    //     Route::post('/newitem/{id}', 'InvoicesController@newItem')->name('invoice.new.item');
-    // });
-    //     Route::resource('invoices', 'InvoicesController');
+        /**
+         * Invoices
+         */
+        // Route::group(['prefix' => 'invoices'], function () {
+        //     Route::post('/updatepayment/{id}', 'InvoicesController@updatePayment')->name('invoice.payment.date');
+        //     Route::post('/reopenpayment/{id}', 'InvoicesController@reopenPayment')->name('invoice.payment.reopen');
+        //     Route::post('/sentinvoice/{id}', 'InvoicesController@updateSentStatus')->name('invoice.sent');
+        //     Route::post('/newitem/{id}', 'InvoicesController@newItem')->name('invoice.new.item');
+        // });
+        //     Route::resource('invoices', 'InvoicesController');
 
-     });
     });
+});

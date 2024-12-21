@@ -12,15 +12,17 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('category', function (Blueprint $table) {
-            $table->id();            
-            $table->string('name');
-            $table->string('url');
+            $table->id();
+            $table->string('cat_code')->unique();            
+            $table->string('name')->nullable();
+            $table->string('url')->nullable();
             $table->integer('last_activity')->index();
             $table->enum('status', ['yes', 'no'])->default('no');
             $table->timestamps();
         });
     }
 
+    
     /**
      * Reverse the migrations.
      */

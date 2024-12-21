@@ -13,9 +13,11 @@ return new class extends Migration
     {
         Schema::create('sub_category', function (Blueprint $table) {
             $table->id();
+            $table->string('subcat_code')->unique();  
             $table->unsignedBigInteger('category_id')->nullable()->index();
             $table->string('name');
             $table->string('url');
+            $table->decimal('price', 8, 2)->default('0.000'); 
             $table->integer('last_activity')->index();
             $table->enum('status', ['yes', 'no'])->default('no');
             $table->timestamps();

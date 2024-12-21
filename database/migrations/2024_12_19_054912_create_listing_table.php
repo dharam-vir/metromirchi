@@ -14,18 +14,19 @@ return new class extends Migration
         Schema::create('listing', function (Blueprint $table) {
             $table->id();
             $table->unsignedBigInteger('user_id');
+            $table->unsignedBigInteger('category_id')->nullable();  // Optional: Foreign key to a category table
             $table->string('company_name');
             $table->string('logo')->nullable();
             $table->string('contact_email')->nullable();
             $table->string('contact_phone')->nullable();
             $table->text('company_description')->nullable();
             $table->string('website_url')->nullable();
+            $table->string('company_type')->nullable();
             $table->string('address')->nullable();
             $table->string('city')->nullable();
             $table->string('state')->nullable();
             $table->string('zip_code')->nullable();
-            $table->enum('status', ['active', 'inactive', 'pending'])->default('active');
-            $table->unsignedBigInteger('category_id')->nullable();  // Optional: Foreign key to a category table
+            $table->enum('status', ['active', 'inactive', 'pending'])->default('active');        
             $table->timestamps();
         
             // Foreign key constraints

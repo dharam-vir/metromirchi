@@ -13,6 +13,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
 class AuthController extends Controller {
+
     public function Login( LoginAdminRequest $request ) {
         // Validate the incoming request data
         $credentials = $request->validated();
@@ -21,7 +22,7 @@ class AuthController extends Controller {
             // Attempt to authenticate the user with the credentials
             if ( Auth::attempt( $credentials ) ) {
                 // If authentication is successful, generate a JWT token
-                $user = Auth::user();
+                $user = Auth::user(['id', 'name', 'email']);
                 $token = JWTAuth::fromUser( $user );
 
                 return response()->json( [
