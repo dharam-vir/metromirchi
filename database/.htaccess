@@ -1,0 +1,60 @@
+<IfModule mod_rewrite.c>
+    <IfModule mod_negotiation.c>
+        Options -MultiViews -Indexes
+    </IfModule>
+    <IfModule mod_headers.c>
+    Header unset X-Powered-By
+</IfModule>
+<IfModule mod_headers.c>
+    # HTTP Strict Transport Security (HSTS)
+    Header always set Strict-Transport-Security "max-age=31536000; includeSubDomains; preload"
+    
+    # Content Security Policy (CSP)
+    Header set Content-Security-Policy "default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval'; object-src 'none'; style-src 'self' 'unsafe-inline';"
+    
+    # Prevent MIME sniffing
+    Header set X-Content-Type-Options "nosniff"
+    
+    # Enable XSS Protection
+    Header set X-XSS-Protection "1; mode=block"
+    
+    # Prevent clickjacking
+    Header set X-Frame-Options "SAMEORIGIN"
+    
+    # Referrer Policy
+    Header set Referrer-Policy "no-referrer-when-downgrade"
+    
+    # Prevent caching of sensitive data
+    Header set Cache-Control "no-store, no-cache, must-revalidate, proxy-revalidate"
+    
+    # Cross-Origin Resource Sharing (CORS)
+    # If necessary, adjust these values according to your needs
+    Header set Access-Control-Allow-Origin "*"
+    Header set Access-Control-Allow-Methods "GET, POST, OPTIONS"
+    Header set Access-Control-Allow-Headers "Content-Type, Authorization"
+</IfModule>
+
+    RewriteEngine On
+
+    # Redirect requests from /public to https://www.metromirchi.com
+    RewriteCond %{REQUEST_URI} ^/public
+    RewriteRule ^ https://www.metromirchi.com [L,R=301]
+
+      # Redirect non-www to www
+      RewriteCond %{HTTP_HOST} ^metromirchi\.com$ [NC]
+      RewriteRule ^(.*)$ https://www.metromirchi.com/$1 [L,R=301]
+
+    # Handle Authorization Header
+    RewriteCond %{HTTP:Authorization} .
+    RewriteRule .* - [E=HTTP_AUTHORIZATION:%{HTTP:Authorization}]
+
+    # Redirect Trailing Slashes If Not A Folder...
+    RewriteCond %{REQUEST_FILENAME} !-d
+    RewriteCond %{REQUEST_URI} (.+)/$
+    RewriteRule ^ %1 [L,R=301]
+
+    # Send Requests To Front Controller...
+    RewriteCond %{REQUEST_FILENAME} !-d
+    RewriteCond %{REQUEST_FILENAME} !-f
+    RewriteRule ^ index.php [L]
+</IfModule>
