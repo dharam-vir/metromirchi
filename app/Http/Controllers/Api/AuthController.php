@@ -6,6 +6,7 @@ use App\Models\User;
 use Tymon\JWTAuth\Facades\JWTAuth;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Validation\ValidationException;
+use Illuminate\Support\Facades\Log;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\LoginAdminRequest;
 use App\Http\Requests\RegisterAdminRequest;

@@ -1,25 +1,27 @@
 <?php
 
-use App\Http\Controllers\CategoryController;
+use App\Http\Controllers\ProfileController;
+use Illuminate\Foundation\Application;
 use Illuminate\Support\Facades\Route;
-use App\Http\Controllers\Auth\AuthController;
+use Inertia\Inertia;
 
 Route::get('/', function () {
-    return view('welcome');
+    return Inertia::render('Welcome', [
+        'canLogin' => Route::has('login'),
+        'canRegister' => Route::has('register'),
+        'laravelVersion' => Application::VERSION,
+        'phpVersion' => PHP_VERSION,
+    ]);
 });
 
-Route::get('login', [AuthController::class, 'index'])->name('login');
-Route::post('post-login', [AuthController::class, 'postLogin'])->name('login.post'); 
-Route::get('registration', [AuthController::class, 'registration'])->name('register');
-Route::post('post-registration', [AuthController::class, 'postRegistration'])->name('register.post'); 
-Route::get('dashboard', [AuthController::class, 'dashboard']); 
-Route::get('logout', [AuthController::class, 'logout'])->name('logout');
+Route::get('/dashboard', function () {
+    return Inertia::render('Dashboard');
+})->middleware(['auth', 'verified'])->name('dashboard');
 
- //category
- Route::group(['prefix => "category'], function () {
-    Route::get('/create', [CategoryController::class, "Create"]);
-    Route::get('/show', [CategoryController::class, "Show"]);
-    Route::post('/update', [CategoryController::class, "Update"]);
-    Route::post('/delete', [CategoryController::class, "Delete"]);
-    Route::post('/de-active', [CategoryController::class, "deActive"]);
+Route::middleware('auth')->group(function () {
+    Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
+    Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
+    Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 });
+
+require __DIR__.'/auth.php';
